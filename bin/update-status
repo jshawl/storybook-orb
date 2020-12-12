@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Env vars provided by Circle CI
+# CIRCLE_BUILD_NUM=7
+# CIRCLE_SHA1=b7e6fe3761a4b5d546260fd4f992d2c738f796b9
+# CIRCLE_USERNAME=jshawl
+
+REPO_URL=https://api.github.com/repos/$CIRCLE_USERNAME/$CIRCLE_PROJECT_REPONAME
+GITHUB_STATUS_URL=$REPO_URL/statuses/$CIRCLE_SHA1
+REPO_ID=`curl -s $REPO_URL | jq '.id'`
+
+curl \
+  -u :$GITHUB_TOKEN $GITHUB_STATUS_URL \
+  -X POST \
+  -H "Accept: application/vnd.github.v3+json" \
+  $REPO_URL/statuses/$CIRCLE_SHA1 \
+  --data-binary @- << EOF
+{
+    "context": "Storybook",
+    "description": "Built and published successfully",
+    "state": "success",
+    "target_url": "https://$CIRCLE_BUILD_NUM-$REPO_ID-gh.circle-artifacts.com/0/storybook-static/index.html"
+}
+EOF
