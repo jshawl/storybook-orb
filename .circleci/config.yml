@@ -1,0 +1,22 @@
+version: 2.1
+orbs:
+  node: circleci/node@3.0.0
+  storybook:
+    orbs:
+      node: circleci/node@3.0.0
+    jobs:
+      build_and_publish:
+        executor: node/default
+        steps:
+          - checkout
+          - node/install-packages
+          - run: npm run build-storybook
+          - store_artifacts:
+              path: ./storybook-static
+          - run: ./bin/update-status
+
+workflows:
+  node-tests:
+    jobs:
+      - storybook/build_and_publish
+      - node/test
