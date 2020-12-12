@@ -14,14 +14,9 @@ orbs:
           - store_artifacts:
               path: ./storybook-static
           - run: ./bin/update-status
-jobs:
-  publish-storybook:
-    executor: node/default
-    steps:
-      - storybook/build_and_publish
 
 workflows:
   node-tests:
     jobs:
-      - publish-storybook
+      - storybook/build_and_publish
       - node/test
